@@ -1,25 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import firebaseConfig from './firebase';
+import firebase from 'firebase/compat/app';
+import * as firebaseui from 'firebaseui'
+import 'firebaseui/dist/firebaseui.css';
+import Fun from './Fun';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  componentDidMount() {
+    firebase.initializeApp(firebaseConfig);
+    const uiConfig = {
+      signInOptions: [{
+        provider: firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+        recaptchaParameters: {
+          type: 'image',
+          size: 'normal',
+          badge: 'bottomleft'
+        },
+        defaultCountry: 'VN'
+      }],
+      callbacks: {
+        signInSuccessWithAuthResult: function(authResult, redirectUrl){
+          alert('successful');
+          return true;
+        }
+      },
+      signInSuccessUrl : "https://youtube.com"
+    };
+
+    var ui = new firebaseui.auth.AuthUI(firebase.auth());
+    ui.start("#firebaseui-auth-container", uiConfig);
+
+  };
+  render() {
+    return (
+      <>
+      <div id='firebaseui-auth-container'>
+        
+      </div>
+      <Fun/>
+      </>
+    );
+  }
 }
-
 export default App;
